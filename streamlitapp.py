@@ -29,12 +29,12 @@ st.markdown("""
 <style>
     /* Main Background */
     .stApp {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%) !important;
     }
     
     /* Main Header with Project Name */
     .project-header {
- background: linear-gradient(135deg, #10b981 0%, #34d399 100%) !important; 
+background: linear-gradient(90deg, #1e40af 0%, #3b82f6 50%, #8b5cf6 100%);
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
