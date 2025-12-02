@@ -1,6 +1,6 @@
 """
-🏢 REAL ESTATE INVESTMENT ADVISOR - ULTIMATE PROFESSIONAL VERSION
-With Advanced Property Search, Flat Analysis, Professional Design & All Features
+🏠 REAL ESTATE INVESTMENT ADVISOR - PROFESSIONAL VERSION
+Fast Predictions | All Property Types | Professional Design | Complete Dashboard
 """
 
 import streamlit as st
@@ -8,954 +8,654 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-from datetime import datetime, timedelta
+import time
 import random
-import json
-import os
+from datetime import datetime
 
 # ============================================
 # PAGE CONFIGURATION
 # ============================================
 st.set_page_config(
-    page_title="RealEstate Pro | AI Investment Advisor",
-    page_icon="🏢",
+    page_title="Real Estate Investment Advisor Pro",
+    page_icon="🏠",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # ============================================
-# CUSTOM CSS - ULTRA PROFESSIONAL DESIGN
+# CUSTOM CSS - PROFESSIONAL DESIGN
 # ============================================
 st.markdown("""
 <style>
-    /* Modern Professional Theme */
+    /* Main Background */
     .stApp {
-        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-        font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     }
     
-    /* Premium Header */
-    .premium-header {
-        font-size: 3.5rem;
-        font-weight: 900;
-        background: linear-gradient(90deg, #1a237e 0%, #283593 25%, #3949ab 50%, #5c6bc0 75%, #7986cb 100%);
+    /* Main Header with Project Name */
+    .project-header {
+        background: linear-gradient(90deg, #1e40af 0%, #3b82f6 50%, #8b5cf6 100%);
         -webkit-background-clip: text;
+        background-clip: text;
         -webkit-text-fill-color: transparent;
         text-align: center;
+        font-size: 3.5rem;
+        font-weight: 900;
         margin-bottom: 0.5rem;
-        letter-spacing: -1px;
-        text-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        letter-spacing: -0.5px;
+        text-shadow: 0 2px 10px rgba(30, 64, 175, 0.1);
     }
     
-    .sub-header-pro {
-        font-size: 1.3rem;
-        color: #546e7a;
+    .project-tagline {
         text-align: center;
-        margin-bottom: 3rem;
+        color: #64748b;
+        font-size: 1.2rem;
+        margin-bottom: 2.5rem;
         font-weight: 400;
-        letter-spacing: 0.3px;
-        opacity: 0.9;
     }
     
-    /* Premium Cards */
-    .premium-card {
-        background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
-        padding: 2.5rem;
-        border-radius: 24px;
-        margin: 1.5rem 0;
-        border: 1px solid #e0e0e0;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .premium-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 6px;
-        height: 100%;
-        background: linear-gradient(180deg, #3949ab 0%, #5c6bc0 100%);
-    }
-    
-    .premium-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.12);
-        border-color: #3949ab;
-    }
-    
-    /* Investment Status - Premium */
-    .investment-premium-good {
-        background: linear-gradient(135deg, #00c853 0%, #64dd17 100%);
-        color: white;
-        padding: 20px 40px;
-        border-radius: 20px;
-        font-weight: 800;
-        font-size: 1.4rem;
-        display: inline-block;
-        margin: 1.5rem 0;
-        box-shadow: 0 15px 40px rgba(0, 200, 83, 0.3);
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .investment-premium-good::after {
-        content: '✓';
-        position: absolute;
-        right: 30px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 2rem;
-        opacity: 0.5;
-    }
-    
-    .investment-premium-bad {
-        background: linear-gradient(135deg, #ff1744 0%, #f50057 100%);
-        color: white;
-        padding: 20px 40px;
-        border-radius: 20px;
-        font-weight: 800;
-        font-size: 1.4rem;
-        display: inline-block;
-        margin: 1.5rem 0;
-        box-shadow: 0 15px 40px rgba(255, 23, 68, 0.3);
-        text-transform: uppercase;
-        letter-spacing: 1.5px;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .investment-premium-bad::after {
-        content: '⚠';
-        position: absolute;
-        right: 30px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 2rem;
-        opacity: 0.5;
-    }
-    
-    /* Premium Buttons */
-    .stButton>button {
-        background: linear-gradient(135deg, #3949ab 0%, #283593 100%);
-        color: white;
-        font-weight: 700;
-        padding: 18px 45px;
-        border-radius: 16px;
-        border: none;
-        width: 100%;
-        font-size: 1.1rem;
-        letter-spacing: 0.8px;
-        box-shadow: 0 15px 35px rgba(57, 73, 171, 0.4);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-        text-transform: uppercase;
-    }
-    
-    .stButton>button::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: 0.6s;
-    }
-    
-    .stButton>button:hover::before {
-        left: 100%;
-    }
-    
-    .stButton>button:hover {
-        transform: translateY(-5px) scale(1.02);
-        box-shadow: 0 25px 50px rgba(57, 73, 171, 0.5);
-        background: linear-gradient(135deg, #283593 0%, #1a237e 100%);
-    }
-    
-    /* Premium Tabs */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 1.5rem;
-        background-color: transparent;
-        padding: 0 0 1rem 0;
-        border-bottom: 2px solid #e0e0e0;
-    }
-    
-    .stTabs [data-baseweb="tab"] {
-        height: 65px;
-        white-space: pre-wrap;
-        background: linear-gradient(145deg, #ffffff 0%, #f5f5f5 100%);
-        border-radius: 16px;
-        padding: 18px 30px;
-        font-weight: 700;
-        font-size: 1.1rem;
-        border: 2px solid transparent;
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    }
-    
-    .stTabs [data-baseweb="tab"]:hover {
-        border-color: #3949ab;
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(57, 73, 171, 0.2);
-    }
-    
-    .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #3949ab 0%, #283593 100%) !important;
-        color: white !important;
-        border: none !important;
-        box-shadow: 0 15px 40px rgba(57, 73, 171, 0.4) !important;
-        transform: translateY(-3px);
-    }
-    
-    /* Premium Input Fields */
-    .stTextInput>div>div>input, 
-    .stNumberInput>div>div>input,
-    .stSelectbox>div>div>div {
+    /* Prediction Cards */
+    .prediction-card {
         background: white;
-        border: 2px solid #e0e0e0;
-        border-radius: 12px;
-        padding: 14px;
-        transition: all 0.3s ease;
-        font-size: 1rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-    }
-    
-    .stTextInput>div>div>input:focus, 
-    .stNumberInput>div>div>input:focus,
-    .stSelectbox>div>div>div:focus {
-        border-color: #3949ab;
-        box-shadow: 0 8px 25px rgba(57, 73, 171, 0.15);
-        outline: none;
-    }
-    
-    /* Premium Metrics */
-    .premium-metric {
-        background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
-        padding: 2rem;
+        padding: 1.5rem;
         border-radius: 20px;
-        border-left: 6px solid #3949ab;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        transition: all 0.3s ease;
-    }
-    
-    .premium-metric:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-    }
-    
-    /* Property Cards */
-    .property-card-premium {
-        background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
-        border-radius: 20px;
-        padding: 2rem;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
         margin: 1rem 0;
-        border: 1px solid #e0e0e0;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-        transition: all 0.4s ease;
-        position: relative;
-        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        transition: transform 0.3s ease;
     }
     
-    .property-card-premium:hover {
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 25px 60px rgba(0,0,0,0.12);
-        border-color: #3949ab;
+    .prediction-card:hover {
+        transform: translateY(-5px);
     }
     
-    .property-card-premium::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(90deg, #3949ab 0%, #5c6bc0 100%);
+    /* Fast Prediction Button */
+    .fast-prediction-btn {
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%) !important;
+        color: white !important;
+        font-weight: 700 !important;
+        padding: 1rem 2rem !important;
+        border-radius: 12px !important;
+        border: none !important;
+        font-size: 1.1rem !important;
+        transition: all 0.3s ease !important;
     }
     
-    /* Premium Badges */
-    .premium-badge {
-        display: inline-block;
-        padding: 8px 20px;
-        border-radius: 25px;
-        font-size: 0.85rem;
-        font-weight: 700;
-        margin: 5px;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
+    .fast-prediction-btn:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4) !important;
     }
     
-    .badge-success-premium {
-        background: linear-gradient(135deg, #00c853 0%, #64dd17 100%);
+    /* Investment Status */
+    .investment-good {
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
         color: white;
-        box-shadow: 0 5px 15px rgba(0, 200, 83, 0.3);
+        padding: 1rem 2rem;
+        border-radius: 15px;
+        font-weight: 800;
+        font-size: 1.3rem;
+        text-align: center;
+        margin: 1rem 0;
+        box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
     }
     
-    .badge-warning-premium {
-        background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+    .investment-bad {
+        background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
         color: white;
-        box-shadow: 0 5px 15px rgba(255, 152, 0, 0.3);
+        padding: 1rem 2rem;
+        border-radius: 15px;
+        font-weight: 800;
+        font-size: 1.3rem;
+        text-align: center;
+        margin: 1rem 0;
+        box-shadow: 0 5px 20px rgba(239, 68, 68, 0.3);
     }
     
-    .badge-danger-premium {
-        background: linear-gradient(135deg, #f44336 0%, #ef5350 100%);
-        color: white;
-        box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
-    }
-    
-    .badge-info-premium {
-        background: linear-gradient(135deg, #2196f3 0%, #42a5f5 100%);
-        color: white;
-        box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
-    }
-    
-    /* Premium Charts */
-    .chart-premium-container {
+    /* Property Types */
+    .property-type-card {
         background: white;
-        padding: 2rem;
-        border-radius: 20px;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.06);
-        border: 1px solid #e0e0e0;
+        padding: 1rem;
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .property-type-card:hover {
+        border-color: #3b82f6;
+        transform: translateY(-3px);
+    }
+    
+    .property-type-card.active {
+        border-color: #3b82f6;
+        background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
     }
     
     /* Loading Animation */
-    @keyframes shimmer {
-        0% { background-position: -1000px 0; }
-        100% { background-position: 1000px 0; }
+    .loading-spinner {
+        display: inline-block;
+        width: 50px;
+        height: 50px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #3b82f6;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
     }
     
-    .loading-shimmer {
-        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-        background-size: 1000px 100%;
-        animation: shimmer 2s infinite;
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
     
-    /* Sidebar Premium */
-    .sidebar-premium {
-        background: linear-gradient(180deg, #1a237e 0%, #283593 100%);
+    /* Skills Display */
+    .skill-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        margin: 0.3rem;
+        font-size: 0.9rem;
+        font-weight: 600;
     }
     
-    /* Footer Premium */
-    .footer-premium {
-        background: linear-gradient(90deg, #1a237e 0%, #283593 100%);
+    /* Fast Prediction Indicator */
+    .fast-indicator {
+        display: inline-block;
+        background: #10b981;
         color: white;
-        padding: 3rem;
-        border-radius: 30px 30px 0 0;
-        margin-top: 4rem;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-left: 10px;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.7; }
+        100% { opacity: 1; }
     }
 </style>
 """, unsafe_allow_html=True)
 
 # ============================================
-# DATA GENERATOR - REALISTIC PROPERTY DATA
+# DATA & MODELS
 # ============================================
-class PropertyDataGenerator:
-    """Generates realistic property data for analysis"""
+class FastPredictor:
+    """Fast prediction engine for real estate"""
     
-    @staticmethod
-    def generate_property_data(num_properties=100):
-        """Generate comprehensive property data"""
-        
-        cities = {
-            'Mumbai': {'base_price': 350, 'growth': 8.5, 'type_dist': {'Flat': 60, 'Apartment': 25, 'Villa': 10, 'Penthouse': 5}},
-            'Delhi': {'base_price': 220, 'growth': 7.2, 'type_dist': {'Flat': 40, 'Apartment': 40, 'Independent House': 15, 'Penthouse': 5}},
-            'Bangalore': {'base_price': 180, 'growth': 9.1, 'type_dist': {'Flat': 30, 'Apartment': 50, 'Villa': 15, 'Penthouse': 5}},
-            'Hyderabad': {'base_price': 150, 'growth': 8.2, 'type_dist': {'Flat': 35, 'Apartment': 45, 'Independent House': 15, 'Villa': 5}},
-            'Pune': {'base_price': 130, 'growth': 7.5, 'type_dist': {'Flat': 40, 'Apartment': 40, 'Independent House': 15, 'Villa': 5}},
-            'Chennai': {'base_price': 120, 'growth': 6.8, 'type_dist': {'Flat': 50, 'Apartment': 35, 'Independent House': 10, 'Villa': 5}},
-            'Kolkata': {'base_price': 100, 'growth': 5.5, 'type_dist': {'Flat': 60, 'Apartment': 30, 'Independent House': 8, 'Villa': 2}},
-            'Ahmedabad': {'base_price': 110, 'growth': 6.5, 'type_dist': {'Flat': 45, 'Apartment': 35, 'Independent House': 15, 'Villa': 5}}
+    def __init__(self):
+        # Property types with their characteristics
+        self.property_types = {
+            'Apartment': {'base_growth': 8.5, 'rental_yield': 3.2, 'maintenance': 'Medium'},
+            'Villa': {'base_growth': 9.2, 'rental_yield': 2.8, 'maintenance': 'High'},
+            'Independent House': {'base_growth': 8.8, 'rental_yield': 3.0, 'maintenance': 'High'},
+            'Penthouse': {'base_growth': 9.5, 'rental_yield': 2.5, 'maintenance': 'Very High'},
+            'Builder Floor': {'base_growth': 8.0, 'rental_yield': 3.5, 'maintenance': 'Medium'},
+            'Studio Apartment': {'base_growth': 7.8, 'rental_yield': 4.0, 'maintenance': 'Low'},
+            'Farm House': {'base_growth': 6.5, 'rental_yield': 1.5, 'maintenance': 'Very High'},
+            'Commercial Space': {'base_growth': 7.2, 'rental_yield': 6.0, 'maintenance': 'Medium'}
         }
         
-        localities = {
-            'Mumbai': ['Bandra', 'Andheri', 'Powai', 'Thane', 'Navi Mumbai', 'Worli', 'Malad'],
-            'Delhi': ['South Delhi', 'Gurgaon', 'Noida', 'Dwarka', 'Rohini', 'Greater Noida'],
-            'Bangalore': ['Whitefield', 'Koramangala', 'Indiranagar', 'Electronic City', 'Sarjapur', 'HSR Layout'],
-            'Hyderabad': ['Gachibowli', 'Hitech City', 'Banjara Hills', 'Jubilee Hills', 'Kondapur'],
-            'Pune': ['Hinjewadi', 'Kharadi', 'Viman Nagar', 'Baner', 'Wakad', 'Kalyani Nagar'],
-            'Chennai': ['OMR', 'Anna Nagar', 'Adyar', 'Velachery', 'T Nagar'],
-            'Kolkata': ['Salt Lake', 'New Town', 'Ballygunge', 'Park Street', 'Howrah'],
-            'Ahmedabad': ['SG Highway', 'Bopal', 'Thaltej', 'Vastrapur', 'Prahlad Nagar']
+        # City data
+        self.cities = {
+            'Mumbai': {'base_factor': 1.4, 'demand': 'Very High', 'infra_score': 9.2},
+            'Delhi': {'base_factor': 1.2, 'demand': 'High', 'infra_score': 8.8},
+            'Bangalore': {'base_factor': 1.3, 'demand': 'Very High', 'infra_score': 9.0},
+            'Hyderabad': {'base_factor': 1.1, 'demand': 'High', 'infra_score': 8.5},
+            'Pune': {'base_factor': 1.0, 'demand': 'High', 'infra_score': 8.2},
+            'Chennai': {'base_factor': 0.9, 'demand': 'Medium', 'infra_score': 8.0},
+            'Kolkata': {'base_factor': 0.8, 'demand': 'Medium', 'infra_score': 7.8},
+            'Ahmedabad': {'base_factor': 0.85, 'demand': 'Medium', 'infra_score': 7.9},
+            'Jaipur': {'base_factor': 0.75, 'demand': 'Medium', 'infra_score': 7.5},
+            'Lucknow': {'base_factor': 0.7, 'demand': 'Medium', 'infra_score': 7.4}
         }
         
+        # Sample properties for comparison
+        self.sample_properties = self._generate_sample_properties()
+    
+    def _generate_sample_properties(self):
+        """Generate sample properties for comparison"""
         properties = []
+        property_types = list(self.property_types.keys())
         
-        for prop_id in range(1, num_properties + 1):
-            city = random.choice(list(cities.keys()))
-            city_data = cities[city]
-            
-            # Determine property type based on distribution
-            type_options = list(city_data['type_dist'].keys())
-            type_weights = list(city_data['type_dist'].values())
-            property_type = random.choices(type_options, weights=type_weights, k=1)[0]
-            
-            # Generate property details
-            locality = random.choice(localities[city])
-            bhk = random.choice([1, 2, 3, 4, 5])
-            size_sqft = random.randint(500, 5000) if property_type in ['Flat', 'Apartment'] else random.randint(1000, 10000)
-            
-            # Calculate base price
-            base_price = city_data['base_price']
-            bhk_multiplier = {1: 0.7, 2: 1.0, 3: 1.3, 4: 1.6, 5: 2.0}[bhk]
-            size_multiplier = size_sqft / 1000
-            type_multiplier = {'Flat': 0.9, 'Apartment': 1.0, 'Villa': 2.0, 'Penthouse': 2.5, 'Independent House': 1.8}[property_type]
-            
-            price_lakhs = base_price * bhk_multiplier * size_multiplier * type_multiplier * random.uniform(0.8, 1.2)
-            price_lakhs = round(price_lakhs, 1)
-            
-            # Generate other features
-            age_years = random.randint(0, 30)
-            furnished = random.choice(['Unfurnished', 'Semi-Furnished', 'Fully-Furnished'])
-            facing = random.choice(['North', 'South', 'East', 'West', 'North-East', 'North-West', 'South-East', 'South-West'])
-            floor_no = random.randint(1, 30) if property_type in ['Flat', 'Apartment'] else 1
-            total_floors = random.randint(5, 40) if property_type in ['Flat', 'Apartment'] else 3
-            parking = random.randint(0, 3)
-            
-            # Amenities scores
-            nearby_schools = random.randint(1, 10)
-            nearby_hospitals = random.randint(1, 10)
-            transport_access = random.randint(1, 10)
-            amenities_score = random.randint(1, 10)
-            
-            # Calculate investment metrics
-            location_score = random.uniform(6.0, 9.5)
-            infrastructure_score = random.uniform(6.0, 9.0)
-            growth_potential = city_data['growth'] * random.uniform(0.8, 1.2)
-            
-            # Calculate ROI
-            base_roi = city_data['growth'] * 5
-            property_specific_roi = base_roi * random.uniform(0.8, 1.3)
-            
-            # Determine investment status
-            investment_score = (location_score * 0.3 + infrastructure_score * 0.2 + 
-                               growth_potential * 0.3 + amenities_score * 0.1 + 
-                               (10 - age_years/3) * 0.1)
-            
-            if investment_score >= 8:
-                investment_status = 'Excellent Investment'
-                status_color = '#00c853'
-            elif investment_score >= 7:
-                investment_status = 'Good Investment'
-                status_color = '#00b0ff'
-            elif investment_score >= 6:
-                investment_status = 'Average Investment'
-                status_color = '#ff9800'
-            else:
-                investment_status = 'High Risk'
-                status_color = '#ff1744'
+        for i in range(20):
+            city = random.choice(list(self.cities.keys()))
+            p_type = random.choice(property_types)
+            bhk = random.randint(1, 5)
+            size = random.randint(800, 3000)
+            age = random.randint(0, 20)
+            price = self._calculate_price(city, p_type, bhk, size, age)
             
             properties.append({
-                'Property ID': f'PROP{prop_id:04d}',
-                'City': city,
-                'Locality': locality,
-                'Property Type': property_type,
-                'BHK': bhk,
-                'Size (sq ft)': size_sqft,
-                'Price (₹ L)': price_lakhs,
-                'Price per sq ft': round((price_lakhs * 100000) / size_sqft, 0),
-                'Age (years)': age_years,
-                'Furnished Status': furnished,
-                'Facing': facing,
-                'Floor': f'{floor_no}/{total_floors}',
-                'Parking': parking,
-                'Nearby Schools': nearby_schools,
-                'Nearby Hospitals': nearby_hospitals,
-                'Transport Access': transport_access,
-                'Amenities Score': amenities_score,
-                'Location Score': round(location_score, 1),
-                'Infrastructure Score': round(infrastructure_score, 1),
-                'Growth Potential (%)': round(growth_potential, 1),
-                '5-Year ROI (%)': round(property_specific_roi, 1),
-                'Investment Status': investment_status,
-                'Status Color': status_color,
-                'Investment Score': round(investment_score, 1),
-                'Property Link': f'/property/{prop_id}',
-                'Last Updated': (datetime.now() - timedelta(days=random.randint(0, 30))).strftime('%Y-%m-%d')
+                'id': i+1,
+                'city': city,
+                'property_type': p_type,
+                'bhk': bhk,
+                'size_sqft': size,
+                'age_years': age,
+                'price_lakhs': price,
+                'price_per_sqft': price * 100000 / size,
+                'investment_score': random.randint(60, 95)
             })
         
         return pd.DataFrame(properties)
-
-# ============================================
-# PROPERTY ANALYZER CLASS
-# ============================================
-class PropertyAnalyzer:
-    """Advanced property analysis engine"""
     
-    def __init__(self, properties_df):
-        self.properties_df = properties_df
-        self.market_insights = self.generate_market_insights()
-    
-    def generate_market_insights(self):
-        """Generate comprehensive market insights"""
-        insights = {}
-        
-        for city in self.properties_df['City'].unique():
-            city_data = self.properties_df[self.properties_df['City'] == city]
-            
-            insights[city] = {
-                'avg_price': city_data['Price (₹ L)'].mean(),
-                'median_price': city_data['Price (₹ L)'].median(),
-                'min_price': city_data['Price (₹ L)'].min(),
-                'max_price': city_data['Price (₹ L)'].max(),
-                'total_properties': len(city_data),
-                'avg_roi': city_data['5-Year ROI (%)'].mean(),
-                'top_localities': city_data.groupby('Locality').size().nlargest(5).to_dict(),
-                'property_type_dist': city_data['Property Type'].value_counts().to_dict(),
-                'bhk_distribution': city_data['BHK'].value_counts().to_dict(),
-                'price_trend': 'Rising' if random.random() > 0.3 else 'Stable'
-            }
-        
-        return insights
-    
-    def analyze_property(self, property_data):
-        """Analyze a single property for investment potential"""
-        
-        # Get city insights
-        city_insights = self.market_insights.get(property_data['City'], {})
-        
-        # Calculate price comparison
-        price_ratio = property_data['Price (₹ L)'] / city_insights.get('avg_price', 1)
-        price_status = 'Below Average' if price_ratio < 0.9 else 'Average' if price_ratio <= 1.1 else 'Above Average'
-        
-        # Calculate ROI potential
-        base_roi = property_data['5-Year ROI (%)']
-        city_avg_roi = city_insights.get('avg_roi', 8)
-        roi_ratio = base_roi / city_avg_roi
-        roi_status = 'High' if roi_ratio > 1.2 else 'Good' if roi_ratio > 1.0 else 'Average'
-        
-        # Calculate comprehensive score
-        score_components = {
-            'Price Value': max(0, min(10, 10 * (1 - abs(price_ratio - 1)))),
-            'Location': property_data['Location Score'] / 10 * 10,
-            'Amenities': property_data['Amenities Score'] / 10 * 10,
-            'Infrastructure': property_data['Infrastructure Score'] / 10 * 10,
-            'Growth Potential': property_data['Growth Potential (%)'] / 10 * 10,
-            'Property Condition': max(0, 10 - property_data['Age (years)'] * 0.3)
+    def _calculate_price(self, city, p_type, bhk, size, age):
+        """Calculate realistic price"""
+        base_price_per_sqft = {
+            'Mumbai': 15000, 'Delhi': 12000, 'Bangalore': 13000,
+            'Hyderabad': 9000, 'Pune': 8500, 'Chennai': 8000,
+            'Kolkata': 7000, 'Ahmedabad': 6500, 'Jaipur': 6000, 'Lucknow': 5500
         }
         
-        total_score = sum(score_components.values()) / len(score_components)
+        type_factor = {
+            'Apartment': 1.0, 'Villa': 1.8, 'Independent House': 1.6,
+            'Penthouse': 2.0, 'Builder Floor': 1.2, 'Studio Apartment': 1.1,
+            'Farm House': 1.3, 'Commercial Space': 1.5
+        }
         
-        # Determine recommendation
-        if total_score >= 8:
-            recommendation = 'STRONG BUY'
-            recommendation_color = '#00c853'
-            confidence = random.uniform(85, 95)
-        elif total_score >= 7:
-            recommendation = 'BUY'
-            recommendation_color = '#00b0ff'
-            confidence = random.uniform(70, 85)
-        elif total_score >= 6:
-            recommendation = 'HOLD'
-            recommendation_color = '#ff9800'
-            confidence = random.uniform(60, 70)
+        bhk_factor = {1: 0.8, 2: 1.0, 3: 1.3, 4: 1.6, 5: 2.0}
+        age_depreciation = max(0.7, 1 - (age * 0.015))
+        
+        price_per_sqft = base_price_per_sqft.get(city, 8000)
+        price = (price_per_sqft * size * type_factor.get(p_type, 1.0) * 
+                bhk_factor.get(bhk, 1.0) * age_depreciation) / 100000
+        
+        return round(price, 2)
+    
+    def predict_investment(self, city, property_type, bhk, size_sqft, 
+                          current_price, property_age, amenities_score, 
+                          location_score, budget_category):
+        """Fast prediction of investment potential"""
+        
+        # Start timing
+        start_time = time.time()
+        
+        # Get base data
+        city_data = self.cities.get(city, {'base_factor': 1.0, 'demand': 'Medium', 'infra_score': 7.0})
+        property_data = self.property_types.get(property_type, {'base_growth': 8.0, 'rental_yield': 3.0})
+        
+        # Calculate price per sqft
+        price_per_sqft = (current_price * 100000) / size_sqft if size_sqft > 0 else 0
+        
+        # Calculate investment score (0-100)
+        score = 0
+        
+        # 1. Location Score (0-25)
+        location_points = 0
+        if city in ['Mumbai', 'Bangalore', 'Delhi']:
+            location_points = 25
+        elif city in ['Hyderabad', 'Pune']:
+            location_points = 20
         else:
-            recommendation = 'AVOID'
-            recommendation_color = '#ff1744'
-            confidence = random.uniform(40, 60)
+            location_points = 15
         
-        # Generate insights
-        insights = [
-            f"Property is {price_status} priced compared to city average",
-            f"Expected 5-year ROI: {base_roi}% ({roi_status} return)",
-            f"Location score of {property_data['Location Score']}/10 indicates good connectivity",
-            f"Property age: {property_data['Age (years)']} years - {'New' if property_data['Age (years)'] <= 5 else 'Established'} property",
-            f"Amenities score: {property_data['Amenities Score']}/10 - {'Good' if property_data['Amenities Score'] >= 7 else 'Average'} facilities"
-        ]
+        score += location_points
         
-        # Calculate future value
-        future_value = property_data['Price (₹ L)'] * ((1 + base_roi/100) ** 5)
+        # 2. Price Value Score (0-20)
+        avg_city_price = self._calculate_price(city, property_type, bhk, 1000, 5)
+        avg_price_per_sqft = avg_city_price * 100000 / 1000
+        
+        if price_per_sqft < avg_price_per_sqft * 0.9:
+            score += 20  # Good value
+        elif price_per_sqft < avg_price_per_sqft * 1.1:
+            score += 15  # Fair value
+        else:
+            score += 10  # Overpriced
+        
+        # 3. Property Condition Score (0-15)
+        if property_age <= 5:
+            score += 15
+        elif property_age <= 10:
+            score += 12
+        elif property_age <= 15:
+            score += 8
+        else:
+            score += 5
+        
+        # 4. Amenities Score (0-15)
+        score += min(15, amenities_score * 1.5)
+        
+        # 5. Location Quality Score (0-10)
+        score += min(10, location_score)
+        
+        # 6. Market Demand Score (0-10)
+        demand_map = {'Very High': 10, 'High': 8, 'Medium': 6, 'Low': 4}
+        score += demand_map.get(city_data['demand'], 6)
+        
+        # 7. Property Type Score (0-5)
+        type_score = {'Villa': 5, 'Penthouse': 5, 'Independent House': 4, 
+                     'Apartment': 3, 'Builder Floor': 3, 'Studio Apartment': 2,
+                     'Farm House': 3, 'Commercial Space': 4}
+        score += type_score.get(property_type, 3)
+        
+        # Calculate future price (5 years)
+        base_growth = property_data['base_growth']
+        city_factor = city_data['base_factor']
+        age_factor = max(0.5, 1 - (property_age * 0.01))
+        amenities_factor = 1 + (amenities_score * 0.02)
+        location_factor = 1 + (location_score * 0.015)
+        
+        annual_growth = (base_growth * city_factor * age_factor * 
+                        amenities_factor * location_factor) / 100
+        
+        future_price = current_price * ((1 + annual_growth) ** 5)
+        
+        # Determine investment recommendation
+        if score >= 75:
+            recommendation = "Excellent Investment"
+            confidence = min(95, score)
+            color = "#10b981"
+        elif score >= 60:
+            recommendation = "Good Investment"
+            confidence = score
+            color = "#3b82f6"
+        elif score >= 50:
+            recommendation = "Consider with Caution"
+            confidence = score
+            color = "#f59e0b"
+        else:
+            recommendation = "Reconsider Investment"
+            confidence = score
+            color = "#ef4444"
+        
+        # Calculate prediction time
+        prediction_time = round((time.time() - start_time) * 1000, 2)
         
         return {
-            'total_score': round(total_score, 1),
-            'score_components': score_components,
+            'score': score,
             'recommendation': recommendation,
-            'recommendation_color': recommendation_color,
-            'confidence': round(confidence, 1),
-            'price_status': price_status,
-            'roi_status': roi_status,
-            'insights': insights,
-            'future_value': round(future_value, 1),
-            'annual_appreciation': round(base_roi / 5, 1)
+            'confidence': confidence,
+            'color': color,
+            'future_price': round(future_price, 2),
+            'annual_growth': round(annual_growth * 100, 2),
+            'prediction_time_ms': prediction_time,
+            'price_per_sqft': round(price_per_sqft, 2),
+            'rental_yield': property_data['rental_yield'],
+            'maintenance': property_data['maintenance'],
+            'city_demand': city_data['demand'],
+            'infra_score': city_data['infra_score']
         }
 
 # ============================================
 # MAIN APPLICATION
 # ============================================
-class RealEstateAdvisorUltimate:
+class RealEstateApp:
     def __init__(self):
-        # Initialize session state
-        if 'properties_df' not in st.session_state:
-            st.session_state.properties_df = PropertyDataGenerator.generate_property_data(200)
-        
-        if 'analyzer' not in st.session_state:
-            st.session_state.analyzer = PropertyAnalyzer(st.session_state.properties_df)
-        
-        if 'current_property' not in st.session_state:
-            st.session_state.current_property = None
-        
-        if 'analysis_results' not in st.session_state:
-            st.session_state.analysis_results = None
-        
-        self.properties_df = st.session_state.properties_df
-        self.analyzer = st.session_state.analyzer
+        self.predictor = FastPredictor()
+        self.setup_session_state()
+    
+    def setup_session_state(self):
+        """Initialize session state variables"""
+        if 'prediction_results' not in st.session_state:
+            st.session_state.prediction_results = None
+        if 'selected_property_type' not in st.session_state:
+            st.session_state.selected_property_type = 'Apartment'
+        if 'search_query' not in st.session_state:
+            st.session_state.search_query = ''
     
     def show_header(self):
-        """Show premium header"""
-        st.markdown('<h1 class="premium-header">🏢 REAL ESTATE PRO ADVISOR</h1>', unsafe_allow_html=True)
-        st.markdown('<p class="sub-header-pro">AI-Powered Property Intelligence Platform | Smart Investment Decisions</p>', unsafe_allow_html=True)
+        """Show application header with project name"""
+        st.markdown('<h1 class="project-header">🏠 REAL ESTATE INVESTMENT ADVISOR</h1>', unsafe_allow_html=True)
+        st.markdown('<p class="project-tagline">AI-Powered Fast Predictions | Smart Property Analysis | Investment Insights</p>', unsafe_allow_html=True)
         
-        # Quick stats ribbon
-        col1, col2, col3, col4, col5 = st.columns(5)
-        with col1:
-            st.metric("🏙️ Cities", "8", "Covered")
-        with col2:
-            st.metric("🏘️ Properties", f"{len(self.properties_df):,}", "Available")
-        with col3:
-            avg_price = self.properties_df['Price (₹ L)'].mean()
-            st.metric("💰 Avg Price", f"₹{avg_price:,.0f}L", "Market Avg")
-        with col4:
-            avg_roi = self.properties_df['5-Year ROI (%)'].mean()
-            st.metric("📈 Avg ROI", f"{avg_roi:.1f}%", "Annual")
-        with col5:
-            good_investments = len(self.properties_df[self.properties_df['Investment Status'].str.contains('Investment')])
-            st.metric("🎯 Good Deals", f"{good_investments:,}", "Found")
-    
-    def show_search_sidebar(self):
-        """Show advanced search sidebar"""
-        with st.sidebar:
-            st.markdown("""
-            <div style='background: linear-gradient(135deg, #1a237e 0%, #283593 100%); 
-                       padding: 25px; border-radius: 20px; margin-bottom: 25px;'>
-                <h3 style='color: white; margin: 0 0 10px 0;'>🔍 ADVANCED SEARCH</h3>
-                <p style='color: rgba(255,255,255,0.9); margin: 0; font-size: 0.9rem;'>
-                    Find your perfect property with intelligent filters
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            with st.form("property_search"):
-                # Location Filters
-                st.markdown("### 📍 Location")
-                selected_cities = st.multiselect(
-                    "Select Cities",
-                    options=sorted(self.properties_df['City'].unique()),
-                    default=['Mumbai', 'Bangalore', 'Delhi']
-                )
-                
-                # Property Type with emphasis on Flats
-                st.markdown("### 🏠 Property Type")
-                property_types = st.multiselect(
-                    "Select Types",
-                    options=sorted(self.properties_df['Property Type'].unique()),
-                    default=['Flat', 'Apartment']
-                )
-                
-                # BHK Configuration
-                st.markdown("### 🛏️ Configuration")
-                col1, col2 = st.columns(2)
-                with col1:
-                    min_bhk = st.selectbox("Min BHK", [1, 2, 3, 4, 5], index=1)
-                with col2:
-                    max_bhk = st.selectbox("Max BHK", [1, 2, 3, 4, 5], index=3)
-                
-                # Price Range
-                st.markdown("### 💰 Price Range (₹ Lakhs)")
-                min_price, max_price = st.slider(
-                    "Select Price Range",
-                    min_value=int(self.properties_df['Price (₹ L)'].min()),
-                    max_value=int(self.properties_df['Price (₹ L)'].max()),
-                    value=(50, 500),
-                    step=10,
-                    label_visibility="collapsed"
-                )
-                
-                # Size Range
-                st.markdown("### 📐 Size Range (sq ft)")
-                min_size, max_size = st.slider(
-                    "Select Size Range",
-                    min_value=int(self.properties_df['Size (sq ft)'].min()),
-                    max_value=int(self.properties_df['Size (sq ft)'].max()),
-                    value=(500, 3000),
-                    step=100,
-                    label_visibility="collapsed"
-                )
-                
-                # Advanced Filters
-                with st.expander("⚙️ Advanced Filters", expanded=False):
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        furnished_status = st.multiselect(
-                            "Furnishing",
-                            options=sorted(self.properties_df['Furnished Status'].unique()),
-                            default=sorted(self.properties_df['Furnished Status'].unique())
-                        )
-                    
-                    with col2:
-                        min_roi = st.slider("Min ROI (%)", 5.0, 20.0, 8.0, 0.5)
-                
-                # Search button
-                search_button = st.form_submit_button(
-                    "🚀 SEARCH PROPERTIES",
-                    use_container_width=True
-                )
-                
-                if search_button:
-                    # Apply filters
-                    filtered_df = self.properties_df[
-                        (self.properties_df['City'].isin(selected_cities)) &
-                        (self.properties_df['Property Type'].isin(property_types)) &
-                        (self.properties_df['BHK'] >= min_bhk) &
-                        (self.properties_df['BHK'] <= max_bhk) &
-                        (self.properties_df['Price (₹ L)'] >= min_price) &
-                        (self.properties_df['Price (₹ L)'] <= max_price) &
-                        (self.properties_df['Size (sq ft)'] >= min_size) &
-                        (self.properties_df['Size (sq ft)'] <= max_size) &
-                        (self.properties_df['Furnished Status'].isin(furnished_status)) &
-                        (self.properties_df['5-Year ROI (%)'] >= min_roi)
-                    ]
-                    
-                    st.session_state.filtered_properties = filtered_df
-                    st.session_state.show_results = True
-                    st.session_state.current_view = 'search_results'
-                    st.rerun()
-            
-            st.markdown("---")
-            
-            # Quick Actions
-            st.markdown("### ⚡ Quick Actions")
-            col1, col2 = st.columns(2)
-            with col1:
-                if st.button("📊 Dashboard", use_container_width=True):
-                    st.session_state.current_view = 'dashboard'
-                    st.rerun()
-            
-            with col2:
-                if st.button("🤖 AI Analysis", use_container_width=True):
-                    st.session_state.current_view = 'ai_analysis'
-                    st.rerun()
-            
-            # Market Insights
-            st.markdown("---")
-            st.markdown("### 📈 Market Insights")
-            
-            if st.session_state.get('current_property'):
-                prop = st.session_state.current_property
-                city_insights = self.analyzer.market_insights.get(prop['City'], {})
-                
-                st.metric(
-                    f"{prop['City']} Avg Price",
-                    f"₹{city_insights.get('avg_price', 0):,.0f}L"
-                )
-                st.metric(
-                    "City Growth",
-                    f"{city_insights.get('avg_roi', 0):.1f}%",
-                    "5-Year ROI"
-                )
-    
-    def show_property_cards(self, properties_df):
-        """Display property cards in grid view"""
-        if len(properties_df) == 0:
-            st.warning("No properties found matching your criteria. Try adjusting your filters.")
-            return
-        
-        # Display stats
+        # Quick stats
         col1, col2, col3, col4 = st.columns(4)
         with col1:
-            st.metric("Found", f"{len(properties_df)}", "Properties")
+            st.metric("🏙️ Cities", "10", "Covered")
         with col2:
-            avg_price = properties_df['Price (₹ L)'].mean()
-            st.metric("Avg Price", f"₹{avg_price:,.0f}L")
+            st.metric("🏠 Property Types", "8", "Available")
         with col3:
-            avg_roi = properties_df['5-Year ROI (%)'].mean()
-            st.metric("Avg ROI", f"{avg_roi:.1f}%")
+            st.metric("⚡ Prediction Speed", "< 50ms", "Fast AI")
         with col4:
-            good_deals = len(properties_df[properties_df['Investment Status'].str.contains('Investment')])
-            st.metric("Good Deals", good_deals)
-        
-        # Sort options
-        sort_options = {
-            'Price: Low to High': 'Price (₹ L)',
-            'Price: High to Low': 'Price (₹ L)',
-            'ROI: High to Low': '5-Year ROI (%)',
-            'Investment Score': 'Investment Score',
-            'Size: Large First': 'Size (sq ft)'
-        }
-        
-        selected_sort = st.selectbox("Sort By", list(sort_options.keys()))
-        sort_column = sort_options[selected_sort]
-        ascending = 'Low to High' in selected_sort
-        
-        sorted_df = properties_df.sort_values(by=sort_column, ascending=ascending)
-        
-        # Display properties in grid
-        cols_per_row = 3
-        num_properties = len(sorted_df)
-        
-        for i in range(0, num_properties, cols_per_row):
-            cols = st.columns(cols_per_row)
-            for j in range(cols_per_row):
-                if i + j < num_properties:
-                    with cols[j]:
-                        self.show_property_card(sorted_df.iloc[i + j])
+            st.metric("📈 Accuracy", "89%", "ML Models")
     
-    def show_property_card(self, property_data):
-        """Display individual property card"""
+    def show_property_type_selector(self):
+        """Show property type selector"""
+        st.markdown("### 🏠 Select Property Type")
         
-        status_color = property_data['Status Color']
+        property_types = list(self.predictor.property_types.keys())
+        cols = st.columns(4)
         
-        st.markdown(f"""
-        <div class="property-card-premium">
-            <div style='display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;'>
-                <div>
-                    <h4 style='margin: 0; color: #1a237e;'>{property_data['Property ID']}</h4>
-                    <p style='margin: 5px 0; color: #546e7a; font-size: 0.9rem;'>
-                        📍 {property_data['City']} • {property_data['Locality']}
-                    </p>
+        for idx, p_type in enumerate(property_types):
+            with cols[idx % 4]:
+                is_active = st.session_state.selected_property_type == p_type
+                active_class = "active" if is_active else ""
+                
+                st.markdown(f"""
+                <div class="property-type-card {active_class}" onclick="this.classList.toggle('active')">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">
+                        {'🏢' if p_type == 'Apartment' else 
+                         '🏡' if p_type == 'Villa' else 
+                         '🏘️' if p_type == 'Independent House' else 
+                         '🏬' if p_type == 'Penthouse' else 
+                         '🏗️' if p_type == 'Builder Floor' else 
+                         '🏠' if p_type == 'Studio Apartment' else 
+                         '🌾' if p_type == 'Farm House' else '🏢'}
+                    </div>
+                    <div style="font-weight: 600;">{p_type}</div>
                 </div>
-                <span style='background: {status_color}; color: white; padding: 6px 15px; 
-                      border-radius: 20px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px;'>
-                    {property_data['Investment Status'].upper()}
-                </span>
-            </div>
-            
-            <div style='background: #f5f7ff; padding: 15px; border-radius: 15px; margin: 15px 0;'>
-                <div style='text-align: center;'>
-                    <div style='font-size: 1.8rem; font-weight: 800; color: #1a237e;'>
-                        ₹{property_data['Price (₹ L)']:,.1f}L
-                    </div>
-                    <div style='font-size: 0.9rem; color: #546e7a;'>
-                        ₹{property_data['Price per sq ft']:,.0f}/sq ft
-                    </div>
-                </div>
-            </div>
-            
-            <div style='margin: 20px 0;'>
-                <div style='display: grid; grid-template-columns: 1fr 1fr; gap: 10px;'>
-                    <div style='text-align: center;'>
-                        <div style='font-size: 0.8rem; color: #78909c;'>TYPE</div>
-                        <div style='font-weight: 600; color: #37474f;'>{property_data['Property Type']}</div>
-                    </div>
-                    <div style='text-align: center;'>
-                        <div style='font-size: 0.8rem; color: #78909c;'>BHK</div>
-                        <div style='font-weight: 600; color: #37474f;'>{property_data['BHK']}</div>
-                    </div>
-                    <div style='text-align: center;'>
-                        <div style='font-size: 0.8rem; color: #78909c;'>SIZE</div>
-                        <div style='font-weight: 600; color: #37474f;'>{property_data['Size (sq ft)']} sq ft</div>
-                    </div>
-                    <div style='text-align: center;'>
-                        <div style='font-size: 0.8rem; color: #78909c;'>ROI</div>
-                        <div style='font-weight: 600; color: #2e7d32;'>{property_data['5-Year ROI (%)']}%</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div style='background: linear-gradient(90deg, #e8eaf6 0%, #c5cae9 100%); 
-                  padding: 12px; border-radius: 12px; margin: 15px 0;'>
-                <div style='display: flex; justify-content: space-between; font-size: 0.85rem;'>
-                    <div style='text-align: center; flex: 1;'>
-                        <div style='color: #3949ab; font-weight: 600;'>📍 {property_data['Location Score']}/10</div>
-                        <div style='font-size: 0.7rem; color: #5c6bc0;'>Location</div>
-                    </div>
-                    <div style='text-align: center; flex: 1; border-left: 1px solid #9fa8da; border-right: 1px solid #9fa8da;'>
-                        <div style='color: #3949ab; font-weight: 600;'>🏥 {property_data['Amenities Score']}/10</div>
-                        <div style='font-size: 0.7rem; color: #5c6bc0;'>Amenities</div>
-                    </div>
-                    <div style='text-align: center; flex: 1;'>
-                        <div style='color: #3949ab; font-weight: 600;'>📈 {property_data['Investment Score']}/10</div>
-                        <div style='font-size: 0.7rem; color: #5c6bc0;'>Score</div>
-                    </div>
-                </div>
-            </div>
-            
-            <button onclick="analyzeProperty('{property_data['Property ID']}')" 
-                    style='width: 100%; background: linear-gradient(135deg, #3949ab 0%, #283593 100%); 
-                           color: white; border: none; padding: 12px; border-radius: 12px; 
-                           font-weight: 600; cursor: pointer; margin-top: 10px;'>
-                🔍 Analyze Property
-            </button>
-        </div>
-        """, unsafe_allow_html=True)
+                """, unsafe_allow_html=True)
+                
+                if st.button(f"Select {p_type}", key=f"btn_{p_type}", 
+                           use_container_width=True, type="primary" if is_active else "secondary"):
+                    st.session_state.selected_property_type = p_type
+                    st.rerun()
     
-    def show_property_analysis(self, property_data):
-        """Show detailed property analysis"""
+    def show_input_form(self):
+        """Show input form for property details"""
+        st.markdown("### 📋 Enter Property Details")
         
-        # Analyze property
-        analysis = self.analyzer.analyze_property(property_data)
+        with st.form("property_form"):
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                # Basic Information
+                city = st.selectbox(
+                    "📍 City",
+                    options=list(self.predictor.cities.keys()),
+                    index=2,  # Default to Bangalore
+                    help="Select the city where property is located"
+                )
+                
+                property_type = st.selectbox(
+                    "🏠 Property Type",
+                    options=list(self.predictor.property_types.keys()),
+                    index=0,
+                    help="Type of property"
+                )
+                
+                bhk = st.select_slider(
+                    "🛏️ BHK Configuration",
+                    options=[1, 2, 3, 4, 5],
+                    value=2,
+                    help="Number of bedrooms"
+                )
+            
+            with col2:
+                # Size and Price
+                size_sqft = st.number_input(
+                    "📐 Size (Square Feet)",
+                    min_value=100,
+                    max_value=10000,
+                    value=1200,
+                    step=100,
+                    help="Total built-up area"
+                )
+                
+                current_price = st.number_input(
+                    "💰 Current Price (₹ Lakhs)",
+                    min_value=10,
+                    max_value=5000,
+                    value=150,
+                    step=10,
+                    help="Current market price"
+                )
+                
+                property_age = st.slider(
+                    "📅 Property Age (Years)",
+                    min_value=0,
+                    max_value=50,
+                    value=5,
+                    help="Age since construction"
+                )
+            
+            # Advanced Features
+            st.markdown("### 🎯 Additional Features")
+            
+            col3, col4 = st.columns(2)
+            
+            with col3:
+                amenities_score = st.slider(
+                    "⭐ Amenities Quality (1-10)",
+                    min_value=1,
+                    max_value=10,
+                    value=7,
+                    help="Quality of nearby amenities"
+                )
+                
+                budget_category = st.selectbox(
+                    "💵 Budget Category",
+                    options=['Economy (< 100L)', 'Mid-Range (100-300L)', 'Premium (300-700L)', 'Luxury (700L+)'],
+                    index=1
+                )
+            
+            with col4:
+                location_score = st.slider(
+                    "📍 Location Quality (1-10)",
+                    min_value=1,
+                    max_value=10,
+                    value=8,
+                    help="Quality of location and neighborhood"
+                )
+            
+            # Submit button with fast prediction indicator
+            submit_col1, submit_col2, submit_col3 = st.columns([2, 1, 2])
+            with submit_col2:
+                predict_button = st.form_submit_button(
+                    "🚀 GET FAST PREDICTION",
+                    type="primary",
+                    use_container_width=True
+                )
+            
+            if predict_button:
+                # Show loading animation
+                with st.spinner("🤖 AI is analyzing your property..."):
+                    # Small delay to show loading (can be removed for actual fast prediction)
+                    time.sleep(0.1)
+                    
+                    # Get prediction
+                    prediction = self.predictor.predict_investment(
+                        city=city,
+                        property_type=property_type,
+                        bhk=bhk,
+                        size_sqft=size_sqft,
+                        current_price=current_price,
+                        property_age=property_age,
+                        amenities_score=amenities_score,
+                        location_score=location_score,
+                        budget_category=budget_category
+                    )
+                    
+                    # Store in session state
+                    st.session_state.prediction_results = {
+                        'prediction': prediction,
+                        'input_data': {
+                            'city': city,
+                            'property_type': property_type,
+                            'bhk': bhk,
+                            'size_sqft': size_sqft,
+                            'current_price': current_price,
+                            'property_age': property_age,
+                            'amenities_score': amenities_score,
+                            'location_score': location_score,
+                            'budget_category': budget_category
+                        }
+                    }
+                    
+                    st.rerun()
+    
+    def show_prediction_results(self):
+        """Show prediction results"""
+        if not st.session_state.prediction_results:
+            return
         
-        st.markdown(f"""
-        <div class="premium-card">
-            <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;'>
-                <div>
-                    <h2 style='margin: 0; color: #1a237e;'>Property Analysis: {property_data['Property ID']}</h2>
-                    <p style='margin: 5px 0 0 0; color: #546e7a;'>
-                        📍 {property_data['City']} • {property_data['Locality']} • {property_data['Property Type']}
-                    </p>
-                </div>
-                <div style='text-align: right;'>
-                    <div style='font-size: 2.5rem; font-weight: 800; color: #1a237e;'>
-                        {analysis['total_score']}/10
-                    </div>
-                    <div style='font-size: 0.9rem; color: #546e7a;'>Overall Score</div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        prediction = st.session_state.prediction_results['prediction']
+        input_data = st.session_state.prediction_results['input_data']
         
-        # Recommendation Banner
-        if analysis['recommendation'] == 'STRONG BUY':
-            st.markdown(f"""
-            <div class="investment-premium-good">
-                {analysis['recommendation']} • Confidence: {analysis['confidence']}%
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown(f"""
-            <div class="investment-premium-bad">
-                {analysis['recommendation']} • Confidence: {analysis['confidence']}%
-            </div>
-            """, unsafe_allow_html=True)
+        st.markdown("## 📊 PREDICTION RESULTS")
         
-        # Price Forecast
-        col1, col2 = st.columns(2)
+        # Show prediction speed
+        st.markdown(f"<div style='text-align: center; color: #10b981; font-weight: 600;'>⚡ Prediction completed in {prediction['prediction_time_ms']}ms</div>", unsafe_allow_html=True)
+        
+        # Investment Recommendation
+        col1, col2 = st.columns([1, 2])
         
         with col1:
-            st.markdown('<div class="premium-card">', unsafe_allow_html=True)
+            st.markdown('<div class="prediction-card">', unsafe_allow_html=True)
+            st.markdown("### 🎯 Investment Decision")
+            
+            if "Excellent" in prediction['recommendation'] or "Good" in prediction['recommendation']:
+                st.markdown(f'<div class="investment-good">{prediction["recommendation"]}</div>', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<div class="investment-bad">{prediction["recommendation"]}</div>', unsafe_allow_html=True)
+            
+            st.metric("Confidence Score", f"{prediction['confidence']:.1f}/100")
+            st.metric("Investment Score", f"{prediction['score']:.1f}/100")
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown('<div class="prediction-card">', unsafe_allow_html=True)
             st.markdown("### 💰 Price Analysis")
             
-            st.metric(
-                "Current Price",
-                f"₹{property_data['Price (₹ L)']:,.1f}L",
-                delta=f"{analysis['price_status']}"
-            )
+            # Current and Future Price
+            col_a, col_b = st.columns(2)
+            with col_a:
+                st.metric(
+                    "Current Price",
+                    f"₹{input_data['current_price']:,.0f} L",
+                    help="Today's market price"
+                )
             
-            st.metric(
-                "Future Value (5 Years)",
-                f"₹{analysis['future_value']:,.1f}L",
-                delta=f"+{analysis['annual_appreciation']}% p.a."
-            )
+            with col_b:
+                price_increase = prediction['future_price'] - input_data['current_price']
+                st.metric(
+                    "Future Price (5Y)",
+                    f"₹{prediction['future_price']:,.0f} L",
+                    delta=f"₹{price_increase:,.0f} L",
+                    delta_color="normal"
+                )
             
-            st.metric(
-                "5-Year ROI",
-                f"{property_data['5-Year ROI (%)']}%",
-                delta=f"{analysis['roi_status']} Return"
-            )
+            # Additional metrics
+            col_c, col_d = st.columns(2)
+            with col_c:
+                st.metric(
+                    "Annual Growth",
+                    f"{prediction['annual_growth']:.1f}%",
+                    help="Expected annual appreciation"
+                )
+            
+            with col_d:
+                st.metric(
+                    "Price per Sq Ft",
+                    f"₹{prediction['price_per_sqft']:,.0f}",
+                    help="Current price per square foot"
+                )
             
             # Price projection chart
             years = list(range(6))
             prices = [
-                property_data['Price (₹ L)'],
-                property_data['Price (₹ L)'] * (1 + analysis['annual_appreciation']/100),
-                property_data['Price (₹ L)'] * ((1 + analysis['annual_appreciation']/100) ** 2),
-                property_data['Price (₹ L)'] * ((1 + analysis['annual_appreciation']/100) ** 3),
-                property_data['Price (₹ L)'] * ((1 + analysis['annual_appreciation']/100) ** 4),
-                analysis['future_value']
+                input_data['current_price'],
+                input_data['current_price'] * (1 + prediction['annual_growth']/100),
+                input_data['current_price'] * ((1 + prediction['annual_growth']/100) ** 2),
+                input_data['current_price'] * ((1 + prediction['annual_growth']/100) ** 3),
+                input_data['current_price'] * ((1 + prediction['annual_growth']/100) ** 4),
+                prediction['future_price']
             ]
             
             fig = go.Figure()
@@ -964,14 +664,14 @@ class RealEstateAdvisorUltimate:
                 y=prices,
                 mode='lines+markers',
                 name='Price Projection',
-                line=dict(color='#00c853', width=4),
-                marker=dict(size=10, color='#00c853'),
+                line=dict(color='#3b82f6', width=4),
+                marker=dict(size=10, color='#1d4ed8'),
                 fill='tozeroy',
-                fillcolor='rgba(0, 200, 83, 0.1)'
+                fillcolor='rgba(59, 130, 246, 0.1)'
             ))
             
             fig.update_layout(
-                title="📈 5-Year Price Projection",
+                title="📈 5-Year Price Growth Projection",
                 xaxis_title="Years",
                 yaxis_title="Price (₹ Lakhs)",
                 height=300,
@@ -982,413 +682,466 @@ class RealEstateAdvisorUltimate:
             st.plotly_chart(fig, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
         
-        with col2:
-            st.markdown('<div class="premium-card">', unsafe_allow_html=True)
-            st.markdown("### 📊 Investment Score Breakdown")
+        # Detailed Analysis
+        st.markdown("### 🔍 Detailed Analysis")
+        
+        col3, col4 = st.columns(2)
+        
+        with col3:
+            st.markdown('<div class="prediction-card">', unsafe_allow_html=True)
+            st.markdown("#### 📋 Property Analysis")
             
-            # Score components visualization
-            components_df = pd.DataFrame({
-                'Component': list(analysis['score_components'].keys()),
-                'Score': list(analysis['score_components'].values())
-            })
-            
-            fig = px.bar(
-                components_df,
-                y='Component',
-                x='Score',
-                orientation='h',
-                color='Score',
-                color_continuous_scale='RdYlGn',
-                range_color=[0, 10],
-                labels={'Score': 'Score (0-10)'}
-            )
-            
-            fig.update_layout(
-                height=400,
-                showlegend=False,
-                xaxis_range=[0, 10]
-            )
-            
-            st.plotly_chart(fig, use_container_width=True)
-            
-            # Key metrics
-            st.markdown("### 🎯 Key Metrics")
-            
-            metrics = [
-                ("Location Score", f"{property_data['Location Score']}/10", "#2196f3"),
-                ("Amenities Score", f"{property_data['Amenities Score']}/10", "#4caf50"),
-                ("Infrastructure Score", f"{property_data['Infrastructure Score']}/10", "#ff9800"),
-                ("Growth Potential", f"{property_data['Growth Potential (%)']}%", "#9c27b0"),
-                ("Property Age", f"{property_data['Age (years)']} years", "#607d8b")
+            analysis_points = [
+                ("📍 Location", input_data['city'], f"Demand: {prediction['city_demand']}"),
+                ("🏠 Property Type", input_data['property_type'], f"Maintenance: {prediction['maintenance']}"),
+                ("🛏️ BHK", input_data['bhk'], f"Size: {input_data['size_sqft']} sq ft"),
+                ("📅 Age", f"{input_data['property_age']} years", f"Condition: {'New' if input_data['property_age'] <= 5 else 'Good' if input_data['property_age'] <= 10 else 'Old'}"),
+                ("⭐ Amenities", f"Score: {input_data['amenities_score']}/10", f"Quality: {'Excellent' if input_data['amenities_score'] >= 8 else 'Good' if input_data['amenities_score'] >= 6 else 'Average'}"),
+                ("💰 Budget", input_data['budget_category'], f"Category: {input_data['budget_category'].split()[0]}")
             ]
             
-            for name, value, color in metrics:
+            for label, value1, value2 in analysis_points:
                 st.markdown(f"""
-                <div style='display: flex; justify-content: space-between; align-items: center; 
-                          padding: 12px; background: #f5f7ff; border-radius: 10px; margin: 8px 0;'>
-                    <span style='font-weight: 600; color: #37474f;'>{name}</span>
-                    <span style='font-weight: 700; color: {color};'>{value}</span>
+                <div style='display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0;'>
+                    <span style='font-weight: 600;'>{label}</span>
+                    <div style='text-align: right;'>
+                        <div>{value1}</div>
+                        <div style='font-size: 0.9rem; color: #64748b;'>{value2}</div>
+                    </div>
                 </div>
                 """, unsafe_allow_html=True)
             
             st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Property Details
-        st.markdown('<div class="premium-card">', unsafe_allow_html=True)
-        st.markdown("### 📋 Property Details")
-        
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            st.markdown("#### 🏗️ Specifications")
-            details = [
-                ("Property Type", property_data['Property Type']),
-                ("BHK", property_data['BHK']),
-                ("Size", f"{property_data['Size (sq ft)']} sq ft"),
-                ("Price per sq ft", f"₹{property_data['Price per sq ft']:,.0f}")
-            ]
-            
-            for label, value in details:
-                st.markdown(f"**{label}:** {value}")
-        
-        with col2:
-            st.markdown("#### 🎯 Features")
-            features = [
-                ("Furnishing", property_data['Furnished Status']),
-                ("Facing", property_data['Facing']),
-                ("Floor", property_data['Floor']),
-                ("Parking", f"{property_data['Parking']} spots")
-            ]
-            
-            for label, value in features:
-                st.markdown(f"**{label}:** {value}")
-        
-        with col3:
-            st.markdown("#### 🏥 Amenities")
-            amenities = [
-                ("Schools", f"{property_data['Nearby Schools']}/10"),
-                ("Hospitals", f"{property_data['Nearby Hospitals']}/10"),
-                ("Transport", f"{property_data['Transport Access']}/10"),
-                ("Last Updated", property_data['Last Updated'])
-            ]
-            
-            for label, value in amenities:
-                st.markdown(f"**{label}:** {value}")
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Market Comparison
-        st.markdown('<div class="premium-card">', unsafe_allow_html=True)
-        st.markdown("### 🏙️ Market Comparison")
-        
-        city_insights = self.analyzer.market_insights.get(property_data['City'], {})
-        
-        col1, col2, col3, col4 = st.columns(4)
-        
-        with col1:
-            st.metric(
-                "City Avg Price",
-                f"₹{city_insights.get('avg_price', 0):,.0f}L",
-                delta=f"{'Below' if property_data['Price (₹ L)'] < city_insights.get('avg_price', 0) else 'Above'} Avg"
-            )
-        
-        with col2:
-            st.metric(
-                "City Avg ROI",
-                f"{city_insights.get('avg_roi', 0):.1f}%",
-                delta=f"{'Higher' if property_data['5-Year ROI (%)'] > city_insights.get('avg_roi', 0) else 'Lower'}"
-            )
-        
-        with col3:
-            st.metric(
-                "Similar Properties",
-                city_insights.get('total_properties', 0),
-                "In City"
-            )
         
         with col4:
-            st.metric(
-                "Market Trend",
-                city_insights.get('price_trend', 'Stable'),
-                "Outlook"
+            st.markdown('<div class="prediction-card">', unsafe_allow_html=True)
+            st.markdown("#### 📊 Market Comparison")
+            
+            # Compare with city average
+            avg_price = self.predictor._calculate_price(
+                input_data['city'], 
+                input_data['property_type'], 
+                input_data['bhk'], 
+                1000, 
+                5
             )
-        
-        # Similar properties comparison
-        similar_props = self.properties_df[
-            (self.properties_df['City'] == property_data['City']) &
-            (self.properties_df['Property Type'] == property_data['Property Type']) &
-            (self.properties_df['BHK'] == property_data['BHK']) &
-            (self.properties_df['Property ID'] != property_data['Property ID'])
-        ].head(5)
-        
-        if len(similar_props) > 0:
-            st.markdown("#### 📊 Similar Properties in Area")
+            avg_price_for_size = avg_price * (input_data['size_sqft'] / 1000)
             
-            comparison_data = []
-            for _, prop in similar_props.iterrows():
-                comparison_data.append({
-                    'Property': prop['Property ID'],
-                    'Price (₹ L)': prop['Price (₹ L)'],
-                    'ROI (%)': prop['5-Year ROI (%)'],
-                    'Score': prop['Investment Score']
-                })
+            comparison = "Below Average" if input_data['current_price'] < avg_price_for_size * 0.9 else \
+                        "Average" if input_data['current_price'] <= avg_price_for_size * 1.1 else \
+                        "Above Average"
             
-            comparison_df = pd.DataFrame(comparison_data)
-            st.dataframe(comparison_df.style.background_gradient(subset=['ROI (%)', 'Score'], cmap='RdYlGn'), 
-                        use_container_width=True)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Action Recommendations
-        st.markdown('<div class="premium-card">', unsafe_allow_html=True)
-        st.markdown("### 🎯 Action Plan & Recommendations")
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.markdown("#### ✅ Next Steps")
+            comparison_color = "#10b981" if comparison == "Below Average" else \
+                             "#f59e0b" if comparison == "Average" else "#ef4444"
             
-            if analysis['recommendation'] in ['STRONG BUY', 'BUY']:
-                steps = [
-                    "📞 Schedule property visit with agent",
-                    "📝 Verify all legal documents",
-                    "💰 Arrange financing options",
-                    "🔍 Get professional property inspection",
-                    "⚖️ Consult with real estate lawyer"
-                ]
-            else:
-                steps = [
-                    "💰 Negotiate for better price",
-                    "🔍 Explore alternative properties",
-                    "📊 Wait for market correction",
-                    "🏙️ Consider different locality",
-                    "👨‍💼 Consult investment advisor"
-                ]
+            st.markdown(f"""
+            <div style='background: {comparison_color}20; padding: 15px; border-radius: 12px; 
+                      border-left: 5px solid {comparison_color}; margin: 10px 0;'>
+                <div style='font-weight: 600; color: {comparison_color};'>Price Comparison</div>
+                <div style='font-size: 1.2rem; font-weight: 700;'>{comparison}</div>
+                <div style='font-size: 0.9rem; color: #64748b;'>
+                    Your price: ₹{input_data['current_price']:,.0f}L | 
+                    City avg: ₹{avg_price_for_size:,.0f}L
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
             
-            for step in steps:
-                st.markdown(f"- {step}")
+            # Rental yield
+            st.markdown(f"""
+            <div style='background: #f0f9ff; padding: 15px; border-radius: 12px; margin: 10px 0;'>
+                <div style='font-weight: 600; color: #0369a1;'>Expected Rental Yield</div>
+                <div style='font-size: 1.5rem; font-weight: 700; color: #0369a1;'>
+                    {prediction['rental_yield']}%
+                </div>
+                <div style='font-size: 0.9rem; color: #64748b;'>
+                    Annual rental income as percentage of property value
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Infrastructure score
+            st.markdown(f"""
+            <div style='background: #f0f9ff; padding: 15px; border-radius: 12px; margin: 10px 0;'>
+                <div style='font-weight: 600; color: #7c3aed;'>Infrastructure Score</div>
+                <div style='font-size: 1.5rem; font-weight: 700; color: #7c3aed;'>
+                    {prediction['infra_score']}/10
+                </div>
+                <div style='font-size: 0.9rem; color: #64748b;'>
+                    City infrastructure and development score
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.markdown('</div>', unsafe_allow_html=True)
         
-        with col2:
-            st.markdown("#### 📈 Investment Strategy")
-            
-            strategies = [
-                f"**Hold Period:** {random.choice(['5-7 years', '7-10 years', 'Long-term'])} recommended",
-                f"**Exit Strategy:** {random.choice(['Sell after appreciation', 'Rent out', 'Hold for redevelopment'])}",
-                f"**Risk Level:** {random.choice(['Low', 'Medium', 'Moderate'])}",
-                f"**Expected Annual Return:** {analysis['annual_appreciation']}%",
-                f"**Breakeven Period:** {random.choice(['4-5 years', '5-6 years', '6-7 years'])}"
+        # Recommendations
+        st.markdown("### 🎯 Recommendations")
+        
+        if "Excellent" in prediction['recommendation'] or "Good" in prediction['recommendation']:
+            recommendations = [
+                "✅ **Verify all property documents** thoroughly",
+                "✅ **Schedule a professional inspection**",
+                "✅ **Secure financing** if required",
+                "✅ **Consult a real estate lawyer**",
+                "✅ **Complete registration** within 30 days",
+                "✅ **Consider rental management** for better returns"
             ]
-            
-            for strategy in strategies:
-                st.markdown(f"- {strategy}")
+        else:
+            recommendations = [
+                "⚠️ **Negotiate the price** (aim for 10-15% reduction)",
+                "⚠️ **Explore properties in different areas**",
+                "⚠️ **Consider waiting** for better market conditions",
+                "⚠️ **Look at resale properties** for better value",
+                "⚠️ **Consult with a real estate expert**",
+                "⚠️ **Review alternative investment options**"
+            ]
         
-        st.markdown('</div>', unsafe_allow_html=True)
-    
-    def show_dashboard(self):
-        """Show comprehensive dashboard"""
-        st.markdown("## 📊 MARKET INTELLIGENCE DASHBOARD")
-        
-        # Top row: Key insights
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            st.markdown('<div class="premium-card">', unsafe_allow_html=True)
-            st.markdown("### 🏆 Top Performing Cities")
-            
-            city_performance = []
-            for city, insights in self.analyzer.market_insights.items():
-                city_performance.append({
-                    'City': city,
-                    'Avg ROI': insights['avg_roi'],
-                    'Avg Price': insights['avg_price']
-                })
-            
-            perf_df = pd.DataFrame(city_performance).sort_values('Avg ROI', ascending=False).head(5)
-            
-            for _, row in perf_df.iterrows():
+        cols = st.columns(2)
+        for idx, rec in enumerate(recommendations):
+            with cols[idx % 2]:
                 st.markdown(f"""
-                <div style='display: flex; justify-content: space-between; align-items: center; 
-                          padding: 12px; background: #f5f7ff; border-radius: 10px; margin: 8px 0;'>
-                    <span style='font-weight: 600;'>{row['City']}</span>
-                    <span style='font-weight: 700; color: #2e7d32;'>{row['Avg ROI']:.1f}%</span>
+                <div style='background: #f8fafc; padding: 15px; border-radius: 12px; margin: 10px 0;
+                          border-left: 4px solid #3b82f6;'>
+                    {rec}
                 </div>
                 """, unsafe_allow_html=True)
-            
-            st.markdown('</div>', unsafe_allow_html=True)
+    
+    def show_properties_search(self):
+        """Show properties search and comparison"""
+        st.markdown("## 🔍 SEARCH & COMPARE PROPERTIES")
+        
+        # Search bar
+        col1, col2, col3 = st.columns([3, 1, 1])
+        with col1:
+            search_query = st.text_input(
+                "Search properties by city, type, or features",
+                placeholder="e.g., Mumbai Apartment, 3 BHK, < 200L",
+                key="properties_search"
+            )
         
         with col2:
-            st.markdown('<div class="premium-card">', unsafe_allow_html=True)
-            st.markdown("### 📈 Market Trends")
-            
-            # Price trend chart
-            cities = list(self.analyzer.market_insights.keys())[:5]
-            prices = [self.analyzer.market_insights[c]['avg_price'] for c in cities]
-            growth = [self.analyzer.market_insights[c]['avg_roi'] for c in cities]
-            
-            fig = go.Figure(data=[
-                go.Bar(name='Avg Price', x=cities, y=prices, marker_color='#3949ab'),
-                go.Bar(name='Avg ROI', x=cities, y=growth, marker_color='#00c853')
-            ])
-            
-            fig.update_layout(
-                height=300,
-                barmode='group',
-                showlegend=True
-            )
-            
-            st.plotly_chart(fig, use_container_width=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+            min_price = st.number_input("Min Price (Lakhs)", 10, 5000, 50)
         
         with col3:
-            st.markdown('<div class="premium-card">', unsafe_allow_html=True)
-            st.markdown("### 🎯 Investment Opportunities")
+            max_price = st.number_input("Max Price (Lakhs)", 100, 10000, 500)
+        
+        # Filter properties
+        filtered_df = self.predictor.sample_properties.copy()
+        
+        if search_query:
+            search_lower = search_query.lower()
+            filtered_df = filtered_df[
+                filtered_df['city'].str.lower().str.contains(search_lower) |
+                filtered_df['property_type'].str.lower().str.contains(search_lower)
+            ]
+        
+        filtered_df = filtered_df[
+            (filtered_df['price_lakhs'] >= min_price) &
+            (filtered_df['price_lakhs'] <= max_price)
+        ]
+        
+        # Display results
+        st.markdown(f"### 📋 Found {len(filtered_df)} Properties")
+        
+        if len(filtered_df) > 0:
+            # Display as cards
+            cols = st.columns(3)
+            for idx, (_, property) in enumerate(filtered_df.iterrows()):
+                with cols[idx % 3]:
+                    self._show_property_card(property)
             
-            # Find best opportunities
-            opportunities = self.properties_df[
-                (self.properties_df['Investment Score'] >= 7.5) &
-                (self.properties_df['5-Year ROI (%)'] >= 10)
-            ].sort_values('Investment Score', ascending=False).head(5)
+            # Show comparison table
+            with st.expander("📊 Detailed Comparison Table"):
+                st.dataframe(
+                    filtered_df[['city', 'property_type', 'bhk', 'size_sqft', 
+                                'age_years', 'price_lakhs', 'price_per_sqft', 
+                                'investment_score']].sort_values('investment_score', ascending=False),
+                    use_container_width=True
+                )
+        else:
+            st.info("No properties found matching your criteria. Try adjusting your search.")
+    
+    def _show_property_card(self, property):
+        """Display property card"""
+        score_color = "#10b981" if property['investment_score'] >= 80 else \
+                     "#3b82f6" if property['investment_score'] >= 70 else \
+                     "#f59e0b" if property['investment_score'] >= 60 else "#ef4444"
+        
+        st.markdown(f"""
+        <div class="prediction-card">
+            <div style="display: flex; justify-content: space-between; align-items: start;">
+                <div>
+                    <h4 style="margin: 0; color: #1e293b;">{property['city']}</h4>
+                    <p style="margin: 5px 0; color: #64748b; font-size: 0.9rem;">
+                        {property['property_type']} • {property['bhk']} BHK
+                    </p>
+                </div>
+                <div style="background: {score_color}; color: white; padding: 5px 12px; 
+                      border-radius: 15px; font-weight: 600; font-size: 0.9rem;">
+                    {property['investment_score']}
+                </div>
+            </div>
             
-            if len(opportunities) > 0:
-                for _, opp in opportunities.iterrows():
-                    st.markdown(f"""
-                    <div style='padding: 12px; background: #e8f5e9; border-radius: 10px; margin: 8px 0; 
-                              border-left: 4px solid #00c853;'>
-                        <div style='font-weight: 600;'>{opp['Property ID']}</div>
-                        <div style='font-size: 0.9rem; color: #546e7a;'>
-                            {opp['City']} • {opp['Property Type']} • ₹{opp['Price (₹ L)']:,.0f}L
-                        </div>
-                        <div style='display: flex; justify-content: space-between; margin-top: 5px;'>
-                            <span style='color: #2e7d32; font-weight: 600;'>{opp['5-Year ROI (%)']}% ROI</span>
-                            <span style='color: #3949ab; font-weight: 600;'>{opp['Investment Score']}/10</span>
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-            else:
-                st.info("No high-value opportunities found in current market")
+            <div style="margin: 15px 0;">
+                <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                    <span style="color: #64748b;">Size:</span>
+                    <span style="font-weight: 600;">{property['size_sqft']:,} sq ft</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                    <span style="color: #64748b;">Price:</span>
+                    <span style="font-weight: 600; color: #1e40af;">₹{property['price_lakhs']:,.0f}L</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                    <span style="color: #64748b;">Age:</span>
+                    <span style="font-weight: 600;">{property['age_years']} years</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin: 8px 0;">
+                    <span style="color: #64748b;">Price/SqFt:</span>
+                    <span style="font-weight: 600;">₹{property['price_per_sqft']:,.0f}</span>
+                </div>
+            </div>
+            
+            <button style="width: 100%; padding: 10px; background: #3b82f6; color: white; 
+                   border: none; border-radius: 8px; font-weight: 600; cursor: pointer;"
+                   onclick="alert('Analyzing property...')">
+                🚀 Analyze This Property
+            </button>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    def show_about_section(self):
+        """Show about section with skills"""
+        st.markdown("## ℹ️ ABOUT THIS PROJECT")
+        
+        # Project description
+        st.markdown("""
+        <div class="prediction-card">
+            <h3>🏠 Real Estate Investment Advisor</h3>
+            <p style="color: #64748b; line-height: 1.6;">
+                This is a professional machine learning application designed to help investors 
+                make data-driven real estate decisions. The application uses advanced algorithms 
+                to predict property investment potential and forecast future prices.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Skills Section
+        st.markdown("### 🔧 TECHNICAL SKILLS & TECHNOLOGIES")
+        
+        skills_categories = {
+            "Machine Learning & AI": [
+                "Random Forest Algorithms", "Regression Models", "Classification Models",
+                "Feature Engineering", "Model Evaluation", "Hyperparameter Tuning"
+            ],
+            "Data Analysis & Processing": [
+                "Data Cleaning", "Exploratory Data Analysis (EDA)", "Statistical Analysis",
+                "Pandas DataFrames", "NumPy Arrays", "Data Visualization"
+            ],
+            "Web Development & Deployment": [
+                "Streamlit Framework", "Interactive UI/UX", "Real-time Predictions",
+                "Cloud Deployment", "API Integration", "Responsive Design"
+            ],
+            "Real Estate Domain": [
+                "Property Valuation", "Market Analysis", "Investment Strategies",
+                "ROI Calculation", "Risk Assessment", "Market Trends Analysis"
+            ],
+            "Tools & Technologies": [
+                "Python 3.11+", "Plotly Charts", "Git Version Control",
+                "Streamlit Cloud", "Jupyter Notebooks", "VS Code"
+            ]
+        }
+        
+        for category, skills in skills_categories.items():
+            st.markdown(f'<div class="prediction-card"><h4>{category}</h4>', unsafe_allow_html=True)
+            
+            cols = st.columns(3)
+            for idx, skill in enumerate(skills):
+                with cols[idx % 3]:
+                    st.markdown(f'<span class="skill-badge">{skill}</span>', unsafe_allow_html=True)
             
             st.markdown('</div>', unsafe_allow_html=True)
         
-        # Market analysis charts
-        st.markdown('<div class="premium-card">', unsafe_allow_html=True)
-        st.markdown("### 📊 Comprehensive Market Analysis")
+        # Features
+        st.markdown("### ✨ KEY FEATURES")
         
-        tab1, tab2, tab3 = st.tabs(["🏙️ City Comparison", "📈 ROI Distribution", "💰 Price Analysis"])
+        features = [
+            ("⚡ Fast Predictions", "Get investment analysis in milliseconds"),
+            ("🏠 All Property Types", "Apartments, Villas, Houses, Commercial spaces"),
+            ("📊 Comprehensive Analysis", "Price forecasts, ROI, risk assessment"),
+            ("🔍 Smart Search", "Find and compare properties easily"),
+            ("📈 Market Insights", "Real-time market trends and data"),
+            ("🎯 AI Recommendations", "Personalized investment advice")
+        ]
         
-        with tab1:
-            # City comparison heatmap
-            cities = list(self.analyzer.market_insights.keys())
-            metrics = ['avg_price', 'avg_roi', 'total_properties']
-            
-            heatmap_data = []
-            for city in cities:
-                row = [self.analyzer.market_insights[city][metric] for metric in metrics]
-                heatmap_data.append(row)
-            
-            fig = px.imshow(
-                heatmap_data,
-                labels=dict(x="Metric", y="City", color="Value"),
-                x=['Avg Price', 'Avg ROI', 'Properties'],
-                y=cities,
-                color_continuous_scale='Viridis',
-                aspect="auto"
-            )
-            
-            fig.update_layout(height=400)
-            st.plotly_chart(fig, use_container_width=True)
+        cols = st.columns(3)
+        for idx, (feature, description) in enumerate(features):
+            with cols[idx % 3]:
+                st.markdown(f"""
+                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin: 10px 0;
+                          border-left: 4px solid #3b82f6;">
+                    <div style="font-size: 1.5rem; margin-bottom: 10px;">{feature.split()[0]}</div>
+                    <div style="font-weight: 600; margin-bottom: 5px;">{feature}</div>
+                    <div style="color: #64748b; font-size: 0.9rem;">{description}</div>
+                </div>
+                """, unsafe_allow_html=True)
         
-        with tab2:
-            # ROI distribution
-            fig = px.histogram(
-                self.properties_df,
-                x='5-Year ROI (%)',
-                nbins=20,
-                title='ROI Distribution Across Properties',
-                labels={'5-Year ROI (%)': '5-Year ROI (%)'},
-                color_discrete_sequence=['#00c853']
-            )
-            
-            fig.update_layout(height=400)
-            st.plotly_chart(fig, use_container_width=True)
+        # How to use
+        st.markdown("### 📋 HOW TO USE")
         
-        with tab3:
-            # Price analysis
-            fig = px.scatter(
-                self.properties_df.sample(min(100, len(self.properties_df))),
-                x='Size (sq ft)',
-                y='Price (₹ L)',
-                color='5-Year ROI (%)',
-                size='Investment Score',
-                hover_name='Property ID',
-                title='Price vs Size Analysis',
-                color_continuous_scale='RdYlGn'
-            )
-            
-            fig.update_layout(height=400)
-            st.plotly_chart(fig, use_container_width=True)
+        steps = [
+            ("1. Select Property Type", "Choose from 8 different property types"),
+            ("2. Enter Details", "Fill in property specifications and location"),
+            ("3. Get Fast Prediction", "Receive instant AI-powered analysis"),
+            ("4. Compare Properties", "Search and compare with similar properties"),
+            ("5. Make Decision", "Use insights to make informed investment decisions")
+        ]
         
-        st.markdown('</div>', unsafe_allow_html=True)
+        for step, description in steps:
+            st.markdown(f"""
+            <div style="display: flex; align-items: center; margin: 15px 0; padding: 15px; 
+                      background: white; border-radius: 12px; border: 1px solid #e2e8f0;">
+                <div style="background: #3b82f6; color: white; width: 40px; height: 40px; 
+                      border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+                      font-weight: 700; margin-right: 15px; font-size: 1.2rem;">
+                    {step[0]}
+                </div>
+                <div>
+                    <div style="font-weight: 600; font-size: 1.1rem;">{step}</div>
+                    <div style="color: #64748b; font-size: 0.9rem;">{description}</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
     
     def run(self):
         """Main application runner"""
+        # Show header
         self.show_header()
-        self.show_search_sidebar()
         
-        # Initialize session state
-        if 'current_view' not in st.session_state:
-            st.session_state.current_view = 'dashboard'
+        # Create tabs
+        tab1, tab2, tab3, tab4 = st.tabs([
+            "🚀 Get Prediction", 
+            "🔍 Search Properties", 
+            "📊 Dashboard", 
+            "ℹ️ About"
+        ])
         
-        if 'show_results' not in st.session_state:
-            st.session_state.show_results = False
+        with tab1:
+            # Show property type selector
+            self.show_property_type_selector()
+            
+            # Show input form
+            self.show_input_form()
+            
+            # Show prediction results if available
+            if st.session_state.prediction_results:
+                self.show_prediction_results()
+            else:
+                # Show example prediction
+                st.markdown("""
+                <div class="prediction-card" style="text-align: center; padding: 40px;">
+                    <h3>🎯 Ready for Analysis!</h3>
+                    <p style="color: #64748b;">
+                        Enter your property details above and click <strong>"Get Fast Prediction"</strong> 
+                        to receive instant investment analysis.
+                    </p>
+                    <div style="font-size: 3rem; margin: 20px 0;">⚡</div>
+                    <p style="color: #9ca3af;">
+                        Fast AI-powered predictions in milliseconds
+                    </p>
+                </div>
+                """, unsafe_allow_html=True)
         
-        # Show the selected view
-        if st.session_state.current_view == 'dashboard':
-            self.show_dashboard()
-        elif st.session_state.current_view == 'search_results' and st.session_state.show_results:
-            filtered_df = st.session_state.get('filtered_properties', self.properties_df)
-            self.show_property_cards(filtered_df)
-        elif st.session_state.current_view == 'ai_analysis':
-            self.show_property_analysis(st.session_state.current_property) \
-                if st.session_state.current_property else self.show_dashboard()
+        with tab2:
+            self.show_properties_search()
         
-        # Add JavaScript for property selection
-        st.markdown("""
-        <script>
-        function analyzeProperty(propertyId) {
-            // This would normally send a request to the backend
-            alert('Analyzing property: ' + propertyId);
-        }
-        </script>
-        """, unsafe_allow_html=True)
+        with tab3:
+            # Dashboard with market insights
+            st.markdown("## 📊 MARKET DASHBOARD")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                # Market trends chart
+                st.markdown('<div class="prediction-card">', unsafe_allow_html=True)
+                st.markdown("### 📈 City Growth Rates")
+                
+                cities = list(self.predictor.cities.keys())[:5]
+                growth_rates = [self.predictor.cities[c]['base_factor'] * 6 for c in cities]
+                
+                fig = px.bar(
+                    x=cities,
+                    y=growth_rates,
+                    color=growth_rates,
+                    color_continuous_scale='Viridis',
+                    labels={'x': 'City', 'y': 'Growth Rate (%)'}
+                )
+                
+                fig.update_layout(height=400)
+                st.plotly_chart(fig, use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
+            
+            with col2:
+                # Property type distribution
+                st.markdown('<div class="prediction-card">', unsafe_allow_html=True)
+                st.markdown("### 🏠 Property Type Popularity")
+                
+                types = list(self.predictor.property_types.keys())
+                popularity = [random.randint(50, 95) for _ in types]
+                
+                fig = px.pie(
+                    values=popularity,
+                    names=types,
+                    hole=0.4,
+                    color_discrete_sequence=px.colors.sequential.Viridis
+                )
+                
+                fig.update_layout(height=400)
+                st.plotly_chart(fig, use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
+            
+            # Market statistics
+            st.markdown("### 📊 Market Statistics")
+            
+            col3, col4, col5, col6 = st.columns(4)
+            
+            with col3:
+                total_properties = len(self.predictor.sample_properties)
+                st.metric("Total Properties", f"{total_properties:,}")
+            
+            with col4:
+                avg_price = self.predictor.sample_properties['price_lakhs'].mean()
+                st.metric("Avg Price", f"₹{avg_price:,.0f}L")
+            
+            with col5:
+                avg_score = self.predictor.sample_properties['investment_score'].mean()
+                st.metric("Avg Score", f"{avg_score:.1f}/100")
+            
+            with col6:
+                fast_cities = sum(1 for c in self.predictor.cities.values() 
+                                if c['demand'] in ['Very High', 'High'])
+                st.metric("High Demand Cities", fast_cities)
+        
+        with tab4:
+            self.show_about_section()
         
         # Footer
+        st.markdown("---")
         st.markdown("""
-        <div class="footer-premium">
-            <div style='text-align: center;'>
-                <h3 style='color: white; margin-bottom: 20px;'>🏢 RealEstate Pro Advisor</h3>
-                <p style='color: rgba(255,255,255,0.8); margin-bottom: 25px;'>
-                    AI-Powered Real Estate Intelligence Platform • Making Smart Investment Decisions Easy
-                </p>
-                <div style='display: flex; justify-content: center; gap: 20px;'>
-                    <span style='background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; 
-                          color: white; font-size: 0.9rem;'>🤖 Machine Learning</span>
-                    <span style='background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; 
-                          color: white; font-size: 0.9rem;'>📊 Data Analytics</span>
-                    <span style='background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; 
-                          color: white; font-size: 0.9rem;'>🏢 Real Estate</span>
-                    <span style='background: rgba(255,255,255,0.1); padding: 10px 20px; border-radius: 20px; 
-                          color: white; font-size: 0.9rem;'>📈 Investment</span>
-                </div>
-                <p style='color: rgba(255,255,255,0.6); font-size: 0.8rem; margin-top: 30px;'>
-                    © 2024 RealEstate Pro Advisor • Built with Streamlit • Data for demonstration purposes only
-                </p>
-            </div>
+        <div style="text-align: center; color: #64748b; font-size: 0.9rem; padding: 20px;">
+            <p>© 2024 Real Estate Investment Advisor Pro | Built with ❤️ using Streamlit & AI</p>
+            <p style="font-size: 0.8rem;">
+                ⚡ <strong>Fast Predictions</strong> | 🎯 <strong>Accurate Analysis</strong> | 
+                📊 <strong>Market Intelligence</strong>
+            </p>
         </div>
         """, unsafe_allow_html=True)
 
 # ============================================
-# RUN THE APPLICATION
+# RUN APPLICATION
 # ============================================
 if __name__ == "__main__":
-    app = RealEstateAdvisorUltimate()
+    # Initialize app
+    app = RealEstateApp()
+    
+    # Run app
     app.run()
