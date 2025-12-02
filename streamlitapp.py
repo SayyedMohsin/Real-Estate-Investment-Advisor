@@ -34,7 +34,7 @@ st.markdown("""
     
     /* Main Header with Project Name */
     .project-header {
-        background: linear-gradient(90deg, #1e40af 0%, #3b82f6 50%, #8b5cf6 100%);
+ background: linear-gradient(135deg, #10b981 0%, #34d399 100%) !important; 
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
