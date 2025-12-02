@@ -81,6 +81,18 @@ tmp/
 models/*
 !models/README.md
 
+# Model files - don't commit large files
+*.pkl
+*.pickle
+*.joblib
+*.h5
+*.hdf5
+*.pth
+*.pt
+*.model
+
+# Models directory
+models/
 # Project specific
 cleaned_real_estate_data.csv
 real_estate_data.csv  # Don't commit large dataset
